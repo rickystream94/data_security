@@ -4,7 +4,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.Scanner;git
+import java.util.Scanner;
 
 /**
  * Created by ricky on 01/11/2017.
@@ -83,7 +83,6 @@ public class Client {
                 choice = input.nextInt();
             } while (choice < 0 || choice > 11);
 
-            //TODO: implement other options
             switch (choice) {
                 case 0:
                     authTicket = printServer.login(authTicket);
@@ -91,12 +90,37 @@ public class Client {
                 case 1:
                     authTicket = printServer.print("FILENAME", "DTU101", authTicket);
                     break;
+                case 2:
+                    authTicket = printServer.queue(authTicket);
+                    break;
+                case 3:
+                    authTicket = printServer.topQueue(1, authTicket);
+                    break;
+                case 4:
+                    authTicket = printServer.start(authTicket);
+                    break;
+                case 5:
+                    authTicket = printServer.stop(authTicket);
+                    break;
+                case 6:
+                    authTicket = printServer.restart(authTicket);
+                    break;
+                case 7:
+                    authTicket = printServer.status(authTicket);
+                    break;
+                case 8:
+                    authTicket = printServer.readConfig("PLACEHOLDER_PARAMETER", authTicket);
+                    break;
+                case 9:
+                    printServer.setConfig("PLACEHOLDER_PARAMETER", "NEW_VALUE", authTicket);
+                    break;
                 case 10:
                     printServer.quitSession(authTicket);
                     logInfo("Closing application... Bye!");
                     return;
                 default:
                     logInfo("Unsupported operation...");
+                    break;
             }
             logInfo(authTicket.getMessage());
         } while (true);

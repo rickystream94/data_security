@@ -25,6 +25,7 @@ public class DBMS {
         DBMS.encryptedProperties = encryptedProperties;
     }
 
+    //todo: read from file: if empty/not existing, create.
     public void init() throws SQLException, WinAPICallFailedException {
         logInfo("Initializing MySQL Database connection with encrypted parameters...");
         JsonObject properties = decryptProperties();

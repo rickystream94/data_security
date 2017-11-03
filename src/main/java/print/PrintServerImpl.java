@@ -2,6 +2,7 @@ package print;
 
 import com.github.windpapi4j.WinAPICallFailedException;
 
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -59,6 +60,112 @@ public class PrintServerImpl implements IPrintServer {
         String message;
         if (isUserAuthenticated(authTicket)) {
             message = "PRINT REQUEST for file " + filename + " on printer " + printer + " requested from user " + authTicket.getUsername();
+        } else {
+            message = "UNAUTHORIZED PRINT INVOCATION: session expired or invalid login.";
+        }
+        logInfo(message);
+        authTicket.setMessage(message);
+        return authTicket;
+    }
+
+    @Override
+    public AuthTicket queue(AuthTicket authTicket) throws RemoteException {
+        String message;
+        if (isUserAuthenticated(authTicket)) {
+            message = "QUEUE REQUEST requested from user " + authTicket.getUsername();
+        } else {
+            message = "UNAUTHORIZED QUEUE INVOCATION: session expired or invalid login.";
+        }
+        logInfo(message);
+        authTicket.setMessage(message);
+        return authTicket;
+    }
+
+    @Override
+    public AuthTicket topQueue(int job, AuthTicket authTicket) throws RemoteException {
+        String message;
+        if (isUserAuthenticated(authTicket)) {
+            message = "TOP_QUEUE REQUEST for job " + job + " requested from user " + authTicket.getUsername();
+            logInfo(message);
+            authTicket.setMessage(message);
+        } else {
+            message = "UNAUTHORIZED TOP_QUEUE INVOCATION: session expired or invalid login.";
+        }
+        logInfo(message);
+        authTicket.setMessage(message);
+        return authTicket;
+    }
+
+    @Override
+    public AuthTicket start(AuthTicket authTicket) throws RemoteException {
+        String message;
+        if (isUserAuthenticated(authTicket)) {
+            message = "START REQUEST requested from user " + authTicket.getUsername();
+        } else {
+            message = "UNAUTHORIZED START INVOCATION: session expired or invalid login.";
+        }
+        logInfo(message);
+        authTicket.setMessage(message);
+        return authTicket;
+    }
+
+    @Override
+    public AuthTicket stop(AuthTicket authTicket) throws RemoteException {
+        String message;
+        if (isUserAuthenticated(authTicket)) {
+            message = "STOP REQUEST requested from user " + authTicket.getUsername();
+        } else {
+            message = "UNAUTHORIZED STOP INVOCATION: session expired or invalid login.";
+        }
+        logInfo(message);
+        authTicket.setMessage(message);
+        return authTicket;
+    }
+
+    @Override
+    public AuthTicket restart(AuthTicket authTicket) throws RemoteException {
+        String message;
+        if (isUserAuthenticated(authTicket)) {
+            message = "RESTART REQUEST requested from user " + authTicket.getUsername();
+        } else {
+            message = "UNAUTHORIZED RESTART INVOCATION: session expired or invalid login.";
+        }
+        logInfo(message);
+        authTicket.setMessage(message);
+        return authTicket;
+    }
+
+    @Override
+    public AuthTicket status(AuthTicket authTicket) throws RemoteException {
+        String message;
+        if (isUserAuthenticated(authTicket)) {
+            message = "STATUS REQUEST requested from user " + authTicket.getUsername();
+        } else {
+            message = "UNAUTHORIZED STATUS INVOCATION: session expired or invalid login.";
+        }
+        logInfo(message);
+        authTicket.setMessage(message);
+        return authTicket;
+    }
+
+    @Override
+    public AuthTicket readConfig(String parameter, AuthTicket authTicket) throws RemoteException {
+        String message;
+        if (isUserAuthenticated(authTicket)) {
+            message = "READ_CONFIG REQUEST for parameter " + parameter + " requested from user " + authTicket.getUsername();
+        } else {
+            message = "UNAUTHORIZED READ_CONFIG INVOCATION: session expired or invalid login.";
+        }
+        logInfo(message);
+        authTicket.setMessage(message);
+        return authTicket;
+    }
+
+    @Override
+    public void setConfig(String parameter, String value, AuthTicket authTicket) throws RemoteException {
+        String message;
+        if (isUserAuthenticated(authTicket)) {
+            message = "SET_CONFIG REQUEST for parameter " + parameter + " with value " + value + " requested from user " + authTicket.getUsername();
             logInfo(message);
             authTicket.setMessage(message);
         } else {
@@ -66,47 +173,7 @@ public class PrintServerImpl implements IPrintServer {
             logInfo(message);
             authTicket.setMessage(message);
         }
-        return authTicket;
-    }
-
-    @Override
-    public void queue(String username) {
-
-    }
-
-    @Override
-    public void topQueue(int job, String username) {
-
-    }
-
-    @Override
-    public void start(String username) {
-
-    }
-
-    @Override
-    public void stop(String username) {
-
-    }
-
-    @Override
-    public void restart(String username) {
-
-    }
-
-    @Override
-    public void status(String username) {
-
-    }
-
-    @Override
-    public void readConfig(String parameter, String username) {
-
-    }
-
-    @Override
-    public void setConfig(String parameter, String value, String username) {
-
+        logInfo(message);
     }
 
     @Override
