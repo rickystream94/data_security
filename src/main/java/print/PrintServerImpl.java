@@ -2,6 +2,9 @@ package print;
 
 import com.github.windpapi4j.WinAPICallFailedException;
 
+import javax.rmi.ssl.SslRMIClientSocketFactory;
+import javax.rmi.ssl.SslRMIServerSocketFactory;
+import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -21,6 +24,7 @@ public class PrintServerImpl implements IPrintServer {
     private static final int PORT = 9000;
     private static final String REMOTE_OBJECT_NAME = "PrintServer";
     private static final String TAG = "[*** PrintServer ***]: ";
+    private static Registry registry;
     private static List<AuthUser> authUsers;
     private static int MAX_SESSION_DURATION_MILLIS = 60000; //1 minute
     private static DBMS dbms;
@@ -33,26 +37,43 @@ public class PrintServerImpl implements IPrintServer {
 
     public static void main(String args[]) {
         try {
+            //Set SSL properties
+            setProperties();
+
             //Init WinDPAPI
             PasswordManager.checkWinDPAPI();
 
             //Init RMI connection
-            PrintServerImpl printServer = new PrintServerImpl();
-            Registry registry = LocateRegistry.createRegistry(PORT);
-            IPrintServer stub = (IPrintServer) UnicastRemoteObject.exportObject(printServer, PORT);
-            registry.rebind(REMOTE_OBJECT_NAME, stub);
-            logInfo(REMOTE_OBJECT_NAME + " is now bound on registry with port " + PORT);
+            initRmiConnection();
 
-            //Initializing print.DBMS
-            dbms = new DBMS();
-            dbCredentials();
-            dbms.init();
+            //Initializing DBMS
+            initDbms();
 
             logInfo("Waiting for client invocations...");
         } catch (Exception e) {
             System.err.println(TAG + " Exception occurred:");
             e.printStackTrace();
         }
+    }
+
+    private static void setProperties() {
+        String pass = "password"; //Hardoded password for key/trust stores
+        System.setProperty("javax.net.ssl.keyStore", "ssl/keystore-server.jks");
+        System.setProperty("javax.net.ssl.keyStorePassword", pass);
+    }
+
+    private static void initDbms() throws SQLException, WinAPICallFailedException {
+        dbms = new DBMS();
+        dbCredentials();
+        dbms.init();
+    }
+
+    private static void initRmiConnection() throws RemoteException, AlreadyBoundException {
+        PrintServerImpl printServer = new PrintServerImpl();
+        registry = LocateRegistry.createRegistry(PORT, new SslRMIClientSocketFactory(), new SslRMIServerSocketFactory());
+        IPrintServer stub = (IPrintServer) UnicastRemoteObject.exportObject(printServer, PORT, new SslRMIClientSocketFactory(), new SslRMIServerSocketFactory());
+        registry.rebind(REMOTE_OBJECT_NAME, stub);
+        logInfo(REMOTE_OBJECT_NAME + " is now bound on registry with port " + PORT);
     }
 
     @Override
@@ -162,18 +183,20 @@ public class PrintServerImpl implements IPrintServer {
     }
 
     @Override
-    public void setConfig(String parameter, String value, AuthTicket authTicket) throws RemoteException {
+    public AuthTicket setConfig(String parameter, String value, AuthTicket authTicket) throws RemoteException {
         String message;
         if (isUserAuthenticated(authTicket)) {
             message = "SET_CONFIG REQUEST for parameter " + parameter + " with value " + value + " requested from user " + authTicket.getUsername();
             logInfo(message);
             authTicket.setMessage(message);
         } else {
-            message = "UNAUTHORIZED PRINT ATTEMPT BLOCKED: session expired or invalid login.";
+            message = "UNAUTHORIZED SET_CONFIG ATTEMPT BLOCKED: session expired or invalid login.";
             logInfo(message);
             authTicket.setMessage(message);
         }
         logInfo(message);
+        authTicket.setMessage(message);
+        return authTicket;
     }
 
     @Override
@@ -305,6 +328,6 @@ public class PrintServerImpl implements IPrintServer {
         String jsonDbProperties = dbms.createJsonFromDbProperties(host, db, user, password, port);
         String encryptedProperties = PasswordManager.encrypt(jsonDbProperties);
         DBMS.setEncryptedProperties(encryptedProperties);
-        logInfo("Properties encrypted --> " + encryptedProperties);
+        logInfo("Properties encrypted --> " + encryptedProperties.substring(0, 30) + "...");
     }
 }

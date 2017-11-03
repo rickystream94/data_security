@@ -1,5 +1,6 @@
 package print;
 
+import javax.rmi.ssl.SslRMIClientSocketFactory;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -10,6 +11,7 @@ import java.util.Scanner;
  * Created by ricky on 01/11/2017.
  */
 public class Client {
+    private static final String HOST = "localhost";
     private static final int PORT = 9000;
     private static final String REMOTE_OBJECT_NAME = "PrintServer";
     private static final String TAG = "[*** Client ***]: ";
@@ -22,7 +24,17 @@ public class Client {
     private static AuthTicket authTicket;
 
     public static void main(String args[]) {
+        //Set SSL Properties
+        setProperties();
+
+        //Connect to server and if successful shows client's menu
         connectToServer();
+    }
+
+    private static void setProperties() {
+        String pass = "password"; //Hardcoded password for key/trust stores
+        System.setProperty("javax.net.ssl.trustStore", "ssl/truststore-client.jks");
+        System.setProperty("javax.net.ssl.trustStorePassword", pass);
     }
 
     /**
@@ -39,7 +51,7 @@ public class Client {
 
             //RMI connection
             logInfo("Looking up in RMI registry for remote object with name " + REMOTE_OBJECT_NAME + "...");
-            Registry registry = LocateRegistry.getRegistry(PORT);
+            Registry registry = LocateRegistry.getRegistry(HOST, PORT, new SslRMIClientSocketFactory());
             printServer = (IPrintServer) registry.lookup(REMOTE_OBJECT_NAME);
             logInfo("Found remote object bound in registry!");
 
@@ -112,7 +124,7 @@ public class Client {
                     authTicket = printServer.readConfig("PLACEHOLDER_PARAMETER", authTicket);
                     break;
                 case 9:
-                    printServer.setConfig("PLACEHOLDER_PARAMETER", "NEW_VALUE", authTicket);
+                    authTicket = printServer.setConfig("PLACEHOLDER_PARAMETER", "NEW_VALUE", authTicket);
                     break;
                 case 10:
                     printServer.quitSession(authTicket);

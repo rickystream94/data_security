@@ -23,7 +23,7 @@ public interface IPrintServer extends Remote {
 
     AuthTicket readConfig(String parameter, AuthTicket authTicket) throws RemoteException;   // prints the value of the parameter on the user's display
 
-    void setConfig(String parameter, String value, AuthTicket authTicket) throws RemoteException;   // sets the parameter to value
+    AuthTicket setConfig(String parameter, String value, AuthTicket authTicket) throws RemoteException;   // sets the parameter to value
 
     /**
      * Logs the specified user in the system and returns a welcome message

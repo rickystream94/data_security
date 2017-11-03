@@ -1,0 +1,1 @@
+Just because of test purposes, the two .JKS files have been created with password "password".

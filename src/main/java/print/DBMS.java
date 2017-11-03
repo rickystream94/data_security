@@ -17,7 +17,7 @@ public class DBMS {
 
     private Connection con;
     private static final String TABLE_USERS = "users";
-    private static final String TAG = "*** [print.DBMS] ***: ";
+    private static final String TAG = "*** [DBMS] ***: ";
     private static final int SHA_BYTE_LENGTH = 256;
     private static String encryptedProperties;
 
