@@ -25,7 +25,6 @@ public class DbmsManager {
     private static final String CREDENTIALS_PATH = "dbms/credentials";
     private Scanner input = new Scanner(System.in);
 
-    //todo: read from file: if empty/not existing, create.
     public void init() throws SQLException, WinAPICallFailedException, IOException {
         JsonObject properties = dbCredentials();
         logInfo("Initializing MySQL Database connection with encrypted parameters...");
