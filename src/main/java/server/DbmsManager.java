@@ -1,40 +1,76 @@
-package print;
+package server;
 
 import com.github.windpapi4j.WinAPICallFailedException;
+import crypto.CryptoManager;
+import common.Util;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
-import java.io.StringReader;
+import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
+import java.util.Scanner;
 
 /**
  * Created by ricky on 02/11/2017.
  */
-public class DBMS {
+public class DbmsManager {
 
     private Connection con;
     private static final String TABLE_USERS = "users";
-    private static final String TAG = "*** [DBMS] ***: ";
+    private static final String TAG = "[*** DbmsManager ***]: ";
     private static final int SHA_BYTE_LENGTH = 256;
-    private static String encryptedProperties;
-
-    public static void setEncryptedProperties(String encryptedProperties) {
-        DBMS.encryptedProperties = encryptedProperties;
-    }
+    private static final String CREDENTIALS_PATH = "dbms/credentials";
+    private Scanner input = new Scanner(System.in);
 
     //todo: read from file: if empty/not existing, create.
-    public void init() throws SQLException, WinAPICallFailedException {
+    public void init() throws SQLException, WinAPICallFailedException, IOException {
+        JsonObject properties = dbCredentials();
         logInfo("Initializing MySQL Database connection with encrypted parameters...");
-        JsonObject properties = decryptProperties();
         con = connect(properties.getString("host"), properties.getInt("port"), properties.getString("database"), properties.getString("user"), properties.getString("password"));
         logInfo("Connected!");
     }
 
-    private JsonObject decryptProperties() throws WinAPICallFailedException {
-        JsonReader jsonReader = Json.createReader(new StringReader(PasswordManager.decrypt(encryptedProperties)));
+    private JsonObject dbCredentials() throws WinAPICallFailedException, IOException {
+        String encryptedProperties;
+        //Checks if credentials file exists, otherwise creates one
+        File file = new File(CREDENTIALS_PATH);
+        logInfo("Checking if file " + CREDENTIALS_PATH + " exists...");
+        if (file.exists()) {
+            logInfo("Found! Decrypting connection properties from there and initializing...");
+            FileInputStream inputStream = new FileInputStream(file);
+            byte[] data = new byte[(int) file.length()];
+            inputStream.read(data);
+            inputStream.close();
+            encryptedProperties = new String(data, "UTF-8");
+        } else {
+            logInfo("File not found, please insert connection parameters...");
+            logInfo("Enter Database Host:");
+            String host = input.nextLine();
+            logInfo("Enter Database Name:");
+            String db = input.nextLine();
+            logInfo("Enter Database Username:");
+            String user = input.nextLine();
+            logInfo("Enter Database Password:");
+            String password = input.nextLine();
+            logInfo("Enter Database Port:");
+            int port = input.nextInt();
+            logInfo("Encrypting DB properties and saving them to file " + CREDENTIALS_PATH + "...");
+            String jsonDbProperties = createJsonFromDbProperties(host, db, user, password, port);
+            encryptedProperties = CryptoManager.encrypt(jsonDbProperties);
+            logInfo("Properties encrypted --> " + encryptedProperties.substring(0, 30) + "...");
+            try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(CREDENTIALS_PATH), "UTF-8"))) {
+                writer.write(encryptedProperties);
+            }
+        }
+        return getJsonFromEncryptedProperties(encryptedProperties);
+    }
+
+    public JsonObject getJsonFromEncryptedProperties(String encryptedProperties) throws WinAPICallFailedException {
+        JsonReader jsonReader = Json.createReader(new StringReader(CryptoManager.decrypt(encryptedProperties)));
         JsonObject object = jsonReader.readObject();
         jsonReader.close();
         return object;
@@ -70,8 +106,8 @@ public class DBMS {
      * @throws NoSuchAlgorithmException
      */
     public void registerUser(String username, String password) throws SQLException, NoSuchAlgorithmException {
-        byte[] salt = PasswordManager.getSalt();
-        String stringSalt = PasswordManager.getStringSaltFromByteArr(salt);
+        byte[] salt = CryptoManager.getSalt();
+        String stringSalt = CryptoManager.getStringSaltFromByteArr(salt);
         String concat = password + stringSalt;
         String query = "INSERT INTO " + TABLE_USERS + "(username,password,salt) VALUES (?,SHA2(?," + SHA_BYTE_LENGTH
                 + "),?)";

@@ -1,79 +1,30 @@
-package print;
+package server;
 
-import com.github.windpapi4j.WinAPICallFailedException;
+import common.AuthTicket;
+import common.IPrintService;
+import common.Util;
 
-import javax.rmi.ssl.SslRMIClientSocketFactory;
-import javax.rmi.ssl.SslRMIServerSocketFactory;
-import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * Created by ricky on 01/11/2017.
  */
-public class PrintServerImpl implements IPrintServer {
+public class PrintServiceImpl implements IPrintService {
 
-    private static final int PORT = 9000;
-    private static final String REMOTE_OBJECT_NAME = "PrintServer";
-    private static final String TAG = "[*** PrintServer ***]: ";
-    private static Registry registry;
-    private static List<AuthUser> authUsers;
-    private static int MAX_SESSION_DURATION_MILLIS = 60000; //1 minute
-    private static DBMS dbms;
-    private static Scanner input = new Scanner(System.in);
+    private static final String TAG = "[*** PrintService ***]: ";
+    private List<AuthUser> authUsers;
+    private int MAX_SESSION_DURATION_MILLIS = 60000; //1 minute
+    private DbmsManager dbmsManager;
 
-    protected PrintServerImpl() {
+    protected PrintServiceImpl(DbmsManager dbmsManager) {
         super();
         authUsers = new ArrayList<>();
-    }
-
-    public static void main(String args[]) {
-        try {
-            //Set SSL properties
-            setProperties();
-
-            //Init WinDPAPI
-            PasswordManager.checkWinDPAPI();
-
-            //Init RMI connection
-            initRmiConnection();
-
-            //Initializing DBMS
-            initDbms();
-
-            logInfo("Waiting for client invocations...");
-        } catch (Exception e) {
-            System.err.println(TAG + " Exception occurred:");
-            e.printStackTrace();
-        }
-    }
-
-    private static void setProperties() {
-        String pass = "password"; //Hardoded password for key/trust stores
-        System.setProperty("javax.net.ssl.keyStore", "ssl/keystore-server.jks");
-        System.setProperty("javax.net.ssl.keyStorePassword", pass);
-    }
-
-    private static void initDbms() throws SQLException, WinAPICallFailedException {
-        dbms = new DBMS();
-        dbCredentials();
-        dbms.init();
-    }
-
-    private static void initRmiConnection() throws RemoteException, AlreadyBoundException {
-        PrintServerImpl printServer = new PrintServerImpl();
-        registry = LocateRegistry.createRegistry(PORT, new SslRMIClientSocketFactory(), new SslRMIServerSocketFactory());
-        IPrintServer stub = (IPrintServer) UnicastRemoteObject.exportObject(printServer, PORT, new SslRMIClientSocketFactory(), new SslRMIServerSocketFactory());
-        registry.rebind(REMOTE_OBJECT_NAME, stub);
-        logInfo(REMOTE_OBJECT_NAME + " is now bound on registry with port " + PORT);
+        this.dbmsManager = dbmsManager;
     }
 
     @Override
@@ -219,7 +170,7 @@ public class PrintServerImpl implements IPrintServer {
 
                 //If password is correct, user must be authenticated
                 authTicket = authenticateUser(authTicket);
-                authTicket.setMessage(TAG + "Welcome " + authTicket.getUsername() + "! You're now logged in with session ID " + authTicket.getSessionId() + ". Are you ready to print?");
+                authTicket.setMessage(TAG + "Welcome " + authTicket.getUsername() + "! You're now logged in with session ID " + authTicket.getSessionId() + ". Are you ready to print_service?");
                 return authTicket;
             }
         } catch (SQLException e) {
@@ -230,11 +181,11 @@ public class PrintServerImpl implements IPrintServer {
     }
 
     private boolean passwordIsVerified(AuthTicket authTicket) throws SQLException {
-        return dbms.isPasswordMatching(authTicket.getUsername(), authTicket.getHashedPassword());
+        return dbmsManager.isPasswordMatching(authTicket.getUsername(), authTicket.getHashedPassword());
     }
 
     private boolean userExists(String username) throws SQLException {
-        return dbms.userExists(username);
+        return dbmsManager.userExists(username);
     }
 
     @Override
@@ -243,7 +194,7 @@ public class PrintServerImpl implements IPrintServer {
         String hashedPassword = authTicket.getHashedPassword();
         logInfo("Signing up new user " + username + "...");
         try {
-            dbms.registerUser(username, hashedPassword);
+            dbmsManager.registerUser(username, hashedPassword);
             logInfo("User " + username + " is now signed up. Authenticating...");
             authTicket = authenticateUser(authTicket);
             authTicket.setMessage(TAG + " Welcome " + username + ", your account has just been registered and you're now logged in.");
@@ -293,7 +244,7 @@ public class PrintServerImpl implements IPrintServer {
         authUsers.add(authUser);
         logInfo("User " + authUser.getUsername() + " is logged in with session ID " + authUser.getSessionId() + "!");
 
-        //Set parameters on auth ticket to be sent back to print.Client
+        //Set parameters on auth ticket to be sent back to client.Client
         authTicket.setSessionId(sessionId);
         authTicket.setTimestamp(now);
         return authTicket;
@@ -310,24 +261,5 @@ public class PrintServerImpl implements IPrintServer {
 
     private static void logInfo(String message) {
         System.out.println(TAG + Util.getCurrentTime() + message);
-    }
-
-    private static void dbCredentials() throws WinAPICallFailedException {
-        logInfo("Enter Database Host:");
-        String host = input.nextLine();
-        logInfo("Enter Database Name:");
-        String db = input.nextLine();
-        logInfo("Enter Database Username:");
-        String user = input.nextLine();
-        logInfo("Enter Database Password:");
-        String password = input.nextLine();
-        logInfo("Enter Database Port:");
-        int port = input.nextInt();
-
-        logInfo("Encrypting DB properties...");
-        String jsonDbProperties = dbms.createJsonFromDbProperties(host, db, user, password, port);
-        String encryptedProperties = PasswordManager.encrypt(jsonDbProperties);
-        DBMS.setEncryptedProperties(encryptedProperties);
-        logInfo("Properties encrypted --> " + encryptedProperties.substring(0, 30) + "...");
     }
 }

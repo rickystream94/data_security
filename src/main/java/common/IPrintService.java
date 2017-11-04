@@ -1,4 +1,6 @@
-package print;
+package common;
+
+import common.AuthTicket;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -6,18 +8,18 @@ import java.rmi.RemoteException;
 /**
  * Created by ricky on 01/11/2017.
  */
-public interface IPrintServer extends Remote {
+public interface IPrintService extends Remote {
     AuthTicket print(String filename, String printer, AuthTicket authTicket) throws RemoteException;   // prints file filename on the specified printer
 
-    AuthTicket queue(AuthTicket authTicket) throws RemoteException;   // lists the print queue on the user's display in lines of the form <job number>   <file name>
+    AuthTicket queue(AuthTicket authTicket) throws RemoteException;   // lists the print_service queue on the user's display in lines of the form <job number>   <file name>
 
     AuthTicket topQueue(int job, AuthTicket authTicket) throws RemoteException;   // moves job to the top of the queue
 
-    AuthTicket start(AuthTicket authTicket) throws RemoteException;   // starts the print server
+    AuthTicket start(AuthTicket authTicket) throws RemoteException;   // starts the print_service server
 
-    AuthTicket stop(AuthTicket authTicket) throws RemoteException;   // stops the print server
+    AuthTicket stop(AuthTicket authTicket) throws RemoteException;   // stops the print_service server
 
-    AuthTicket restart(AuthTicket authTicket) throws RemoteException;   // stops the print server, clears the print queue and starts the print server again
+    AuthTicket restart(AuthTicket authTicket) throws RemoteException;   // stops the print_service server, clears the print_service queue and starts the print_service server again
 
     AuthTicket status(AuthTicket authTicket) throws RemoteException;  // prints status of printer on the user's display
 

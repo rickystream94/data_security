@@ -1,4 +1,9 @@
-package print;
+package client;
+
+import crypto.CryptoManager;
+import common.AuthTicket;
+import common.IPrintService;
+import common.Util;
 
 import javax.rmi.ssl.SslRMIClientSocketFactory;
 import java.rmi.NotBoundException;
@@ -20,7 +25,7 @@ public class Client {
     private static String username;
     private static String password;
     private static Scanner input = new Scanner(System.in);
-    private static IPrintServer printServer;
+    private static IPrintService printServer;
     private static AuthTicket authTicket;
 
     public static void main(String args[]) {
@@ -38,7 +43,7 @@ public class Client {
     }
 
     /**
-     * Establishes connection to remote print server and logs in the user
+     * Establishes connection to remote print_service server and logs in the user
      */
     private static void connectToServer() {
         try {
@@ -52,13 +57,13 @@ public class Client {
             //RMI connection
             logInfo("Looking up in RMI registry for remote object with name " + REMOTE_OBJECT_NAME + "...");
             Registry registry = LocateRegistry.getRegistry(HOST, PORT, new SslRMIClientSocketFactory());
-            printServer = (IPrintServer) registry.lookup(REMOTE_OBJECT_NAME);
+            printServer = (IPrintService) registry.lookup(REMOTE_OBJECT_NAME);
             logInfo("Found remote object bound in registry!");
 
-            //print.Client-side password hashing
+            //Client-side password hashing
             logInfo("Hashing password...");
-            //print.AuthTicket will never contain original password, but always a hashed version
-            String hashedPassword = PasswordManager.getHashedPassword(password);
+            //AuthTicket will never contain original password, but always a hashed version
+            String hashedPassword = CryptoManager.getHashedPassword(password);
             logInfo("Done: " + password + " ---> " + hashedPassword);
 
             //Login by generating fresh Authentication Ticket
@@ -91,7 +96,7 @@ public class Client {
         do {
             do {
                 logInfo("\n\n*** Choose your next action: ***");
-                System.out.println("0) Login\n1) Print\n2) Show print queue\n3) Move job to top\n4) Start print server\n0) Stop print server\n6) Restart print server\n7) Get print server status\n8) Read config\n9) Set config\n10) Exit");
+                System.out.println("0) Re-login\n1) Print\n2) Show print_service queue\n3) Move job to top\n4) Start print_service server\n0) Stop print_service server\n6) Restart print_service server\n7) Get print_service server status\n8) Read config\n9) Set config\n10) Exit");
                 choice = input.nextInt();
             } while (choice < 0 || choice > 11);
 

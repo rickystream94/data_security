@@ -1,4 +1,4 @@
-package print;
+package crypto;
 
 import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
@@ -17,7 +17,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 /**
  * Created by ricky on 02/11/2017.
  */
-public class PasswordManager {
+public class CryptoManager {
 
     private static final int SALT_BYTE_LENGTH = 16;
     private static final String SALT_ALGORITHM_NAME = "SHA1PRNG";
