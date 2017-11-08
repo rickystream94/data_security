@@ -170,7 +170,7 @@ public class PrintServiceImpl implements IPrintService {
 
                 //If password is correct, user must be authenticated
                 authTicket = authenticateUser(authTicket);
-                authTicket.setMessage(TAG + "Welcome " + authTicket.getUsername() + "! You're now logged in with session ID " + authTicket.getSessionId() + ". Are you ready to print_service?");
+                authTicket.setMessage(TAG + "Welcome " + authTicket.getUsername() + "! You're now logged in with session ID " + authTicket.getSessionId() + ". Are you ready to print?");
                 return authTicket;
             }
         } catch (SQLException e) {

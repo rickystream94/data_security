@@ -96,7 +96,7 @@ public class Client {
         do {
             do {
                 logInfo("\n\n*** Choose your next action: ***");
-                System.out.println("0) Re-login\n1) Print\n2) Show print_service queue\n3) Move job to top\n4) Start print_service server\n0) Stop print_service server\n6) Restart print_service server\n7) Get print_service server status\n8) Read config\n9) Set config\n10) Exit");
+                System.out.println("0) Re-login\n1) Print\n2) Show print_service queue\n3) Move job to top\n4) Start print_service server\n5) Stop print_service server\n6) Restart print_service server\n7) Get print_service server status\n8) Read config\n9) Set config\n10) Exit");
                 choice = input.nextInt();
             } while (choice < 0 || choice > 11);
 
