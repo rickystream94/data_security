@@ -1,6 +1,7 @@
 package server;
 
 import com.github.windpapi4j.WinAPICallFailedException;
+import common.IAuthenticator;
 import common.IPrintService;
 import common.Util;
 import crypto.CryptoManager;
@@ -18,9 +19,11 @@ import java.sql.SQLException;
 public class ApplicationServer {
 
     private static final int PORT = 9000;
-    private static final String PRINT_SERVICE = "PrintServer";
+    private static final String PRINT_SERVICE = "PrintService";
+    private static final String AUTHENTICATOR = "Authenticator";
     private static final String TAG = "[*** ApplicationServer ***]: ";
     private static DbmsManager dbmsManager;
+    private static PolicyManager policyManager;
 
     public static void main(String args[]) {
         try {
@@ -33,6 +36,9 @@ public class ApplicationServer {
 
             //Initializing DbmsManager
             initDbms();
+
+            //Initializing PolicyManager
+            initPolicyManager();
 
             //Init RMI connection
             initRmiConnection();
@@ -55,12 +61,28 @@ public class ApplicationServer {
         dbmsManager.init();
     }
 
+    //TODO: choose dynamically
+    private static void initPolicyManager() {
+        policyManager = new AclPolicyManager();
+        //policyManager = new RoleBasedPolicyManager();
+    }
+
+    /**
+     * Binds both remote objects to the RMI registry
+     *
+     * @throws RemoteException
+     * @throws AlreadyBoundException
+     */
     private static void initRmiConnection() throws RemoteException, AlreadyBoundException {
-        PrintServiceImpl printServer = new PrintServiceImpl(dbmsManager);
+        Authenticator authenticator = new Authenticator(dbmsManager, policyManager);
+        IPrintService printServer = new PrintServiceImpl(authenticator);
         Registry registry = LocateRegistry.createRegistry(PORT, new SslRMIClientSocketFactory(), new SslRMIServerSocketFactory());
-        IPrintService stub = (IPrintService) UnicastRemoteObject.exportObject(printServer, PORT, new SslRMIClientSocketFactory(), new SslRMIServerSocketFactory());
-        registry.rebind(PRINT_SERVICE, stub);
+        IPrintService printServiceStub = (IPrintService) UnicastRemoteObject.exportObject(printServer, PORT, new SslRMIClientSocketFactory(), new SslRMIServerSocketFactory());
+        IAuthenticator authenticatorStub = (IAuthenticator) UnicastRemoteObject.exportObject(authenticator, PORT, new SslRMIClientSocketFactory(), new SslRMIServerSocketFactory());
+        registry.rebind(PRINT_SERVICE, printServiceStub);
+        registry.rebind(AUTHENTICATOR, authenticatorStub);
         logInfo(PRINT_SERVICE + " is now bound on registry with port " + PORT);
+        logInfo(AUTHENTICATOR + " is now bound on registry with port " + PORT);
     }
 
     private static void logInfo(String message) {
