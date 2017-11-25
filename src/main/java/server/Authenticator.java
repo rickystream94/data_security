@@ -88,18 +88,23 @@ public class Authenticator implements IAuthenticator {
      * @return
      */
     void isUserAuthenticated(AuthTicket authTicket) throws Exception {
+        String error;
         //1) Verify if user is not authenticated
-        if (authUsers.stream().noneMatch(x -> x.getUsername().equals(authTicket.getUsername())))
-            throw new Exception("User " + authTicket.getUsername() + "is not found among authenticated users. Please login first.");
+        if (authUsers.stream().noneMatch(x -> x.getUsername().equals(authTicket.getUsername()))) {
+            error = "User " + authTicket.getUsername() + " is not found among authenticated users. Please login first.";
+            logInfo(error);
+            throw new Exception(error);
+        }
 
         //2) Verify if his session has not expired
         logInfo("User " + authTicket.getUsername() + " was found among Authenticated Users: checking if session is still valid...");
         Date now = new Date();
         boolean isSessionValid = authUsers.stream().anyMatch(x -> x.getSessionId() == authTicket.getSessionId());
         if (isSessionValid && (now.getTime() - authTicket.getTimestamp().getTime()) > MAX_SESSION_DURATION_MILLIS) {
-            logInfo("Session with ID " + authTicket.getSessionId() + " for user " + authTicket.getUsername() + " has expired (current session time limit is " + MAX_SESSION_DURATION_MILLIS + " millis)! Need to re-login.");
+            error = "Session with ID " + authTicket.getSessionId() + " for user " + authTicket.getUsername() + " has expired (current session time limit is " + MAX_SESSION_DURATION_MILLIS + " millis)! Need to re-login.";
+            logInfo(error);
             quitSession(authTicket);
-            throw new Exception("Session expired for user " + authTicket.getUsername() + ". Please login again.");
+            throw new Exception(error);
         } else {
             logInfo("Session with ID " + authTicket.getSessionId() + " for user " + authTicket.getUsername() + " is valid: authenticated!");
         }
