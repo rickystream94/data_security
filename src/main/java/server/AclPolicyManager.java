@@ -25,11 +25,23 @@ public class AclPolicyManager extends PolicyManager {
      */
     @Override
     public void checkPermission(Permission permission, String username) throws Exception {
+        String error;
+        JsonObject aclEntries = super.policy.getJsonObject("entries");
+
+        //Return immediately if user doesn't show up in the ACL
+        if (!aclEntries.keySet().contains(username)) {
+            error = "Error: User " + username + " doesn't have any permission!";
+            logInfo(error);
+            throw new Exception(error);
+        }
+
+        //Check if user was granted the specified permission
         if (permission instanceof PrinterPermission) {
+            //Get type of requested permission
             PermissionType permissionType = ((PrinterPermission) permission).getPermissionType();
 
             //Get the AclEntry corresponding to the specified user
-            JsonObject aclEntry = super.policy.getJsonObject(username);
+            JsonObject aclEntry = aclEntries.getJsonObject(username);
 
             //Get the list of permits
             JsonArray permitsJsonArray = aclEntry.getJsonArray("allowed");
@@ -39,10 +51,14 @@ public class AclPolicyManager extends PolicyManager {
             }
 
             //If user has the specified permission OR the special "ALL" permission type return silently
-            if (Arrays.stream(permitsArray).anyMatch(x -> x.equals(PermissionType.ALL.name()) || x.equals(permissionType.name())))
+            if (Arrays.stream(permitsArray).anyMatch(permit -> permit.equals(PermissionType.ALL.name()) || permit.equals(permissionType.name()))) {
+                logInfo("Permission " + permissionType.name() + " granted for user " + username + ": Authorized!");
                 return;
-            else
-                throw new Exception("Error: User " + username + " doesn't have the requested '" + permissionType.name() + "' permission to perform this action!");
+            } else {
+                error = "Error: User " + username + " doesn't have the requested '" + permissionType.name() + "' permission to perform this action: Unauthorized!";
+                logInfo(error);
+                throw new Exception(error);
+            }
         }
         //Other permission types should be handled here...
         throw new Exception("Unhandled permission type!");
