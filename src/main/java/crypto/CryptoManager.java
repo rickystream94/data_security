@@ -1,6 +1,5 @@
 package crypto;
 
-import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -10,6 +9,7 @@ import com.github.windpapi4j.WinAPICallFailedException;
 import com.github.windpapi4j.WinDPAPI;
 import com.github.windpapi4j.WinDPAPI.CryptProtectFlag;
 
+import javax.xml.bind.DatatypeConverter;
 import java.util.Base64;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
