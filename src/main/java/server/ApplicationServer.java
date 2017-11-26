@@ -62,7 +62,6 @@ public class ApplicationServer {
         dbmsManager.init();
     }
 
-    //TODO: choose dynamically
     private static void initPolicyManager() {
         Scanner input = new Scanner(System.in);
         logInfo("Set Policy Manager type to enforce Access Control:");
