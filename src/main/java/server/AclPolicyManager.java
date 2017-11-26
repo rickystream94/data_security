@@ -49,9 +49,10 @@ public class AclPolicyManager extends PolicyManager {
             for (int i = 0; i < permitsJsonArray.size(); i++) {
                 permitsArray[i] = permitsJsonArray.getString(i);
             }
+            logInfo("Checking if user " + username + " has '" + permissionType.name() + "' permit among all his permits: " + Arrays.asList(permitsArray).toString() + "");
 
-            //If user has the specified permission OR the special "ALL" permission type return silently
-            if (Arrays.stream(permitsArray).anyMatch(permit -> permit.equals(PermissionType.ALL.name()) || permit.equals(permissionType.name()))) {
+            //If user has the specified permission return silently
+            if (Arrays.stream(permitsArray).anyMatch(permit -> permit.equals(permissionType.name()))) {
                 logInfo("Permission " + permissionType.name() + " granted for user " + username + ": Authorized!");
                 return;
             } else {
@@ -60,6 +61,7 @@ public class AclPolicyManager extends PolicyManager {
                 throw new Exception(error);
             }
         }
+
         //Other permission types should be handled here...
         throw new Exception("Unhandled permission type!");
     }

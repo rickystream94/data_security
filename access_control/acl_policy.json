@@ -2,7 +2,15 @@
   "entries": {
     "Alice": {
       "permits": [
-        "ALL"
+        "PRINT",
+        "TOP_QUEUE",
+        "QUEUE",
+        "RESTART",
+        "START",
+        "STOP",
+        "STATUS",
+        "READ_CONFIG",
+        "SET_CONFIG"
       ]
     },
     "Bob": {
