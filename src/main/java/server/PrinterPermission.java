@@ -3,7 +3,8 @@ package server;
 import java.security.Permission;
 
 public class PrinterPermission extends Permission {
-    PermissionType permissionType;
+    private PermissionType permissionType;
+
     /**
      * Constructs a permission with the specified name.
      */
@@ -23,6 +24,11 @@ public class PrinterPermission extends Permission {
 
     @Override
     public boolean equals(Object obj) {
+        if (obj instanceof PrinterPermission) {
+            PrinterPermission other = (PrinterPermission) obj;
+            if (other.getPermissionType() == ((PrinterPermission) obj).getPermissionType())
+                return true;
+        }
         return false;
     }
 

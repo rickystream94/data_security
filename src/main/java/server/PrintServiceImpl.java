@@ -19,7 +19,7 @@ public class PrintServiceImpl implements IPrintService {
     @Override
     public AuthTicket print(String filename, String printer, AuthTicket authTicket) throws Exception {
         authenticator.isUserAuthenticated(authTicket);
-        authenticator.isUserAuthorized(PermissionType.PRINT, authTicket);
+        authenticator.isUserAuthorized(PermissionType.PRINT, authTicket.getUsername());
 
         //Specific method code should be placed here...
 
@@ -32,7 +32,7 @@ public class PrintServiceImpl implements IPrintService {
     @Override
     public AuthTicket queue(AuthTicket authTicket) throws Exception {
         authenticator.isUserAuthenticated(authTicket);
-        authenticator.isUserAuthorized(PermissionType.QUEUE, authTicket);
+        authenticator.isUserAuthorized(PermissionType.QUEUE, authTicket.getUsername());
 
         //Specific method code should be placed here...
 
@@ -45,7 +45,7 @@ public class PrintServiceImpl implements IPrintService {
     @Override
     public AuthTicket topQueue(int job, AuthTicket authTicket) throws Exception {
         authenticator.isUserAuthenticated(authTicket);
-        authenticator.isUserAuthorized(PermissionType.TOP_QUEUE, authTicket);
+        authenticator.isUserAuthorized(PermissionType.TOP_QUEUE, authTicket.getUsername());
 
         //Specific method code should be placed here...
 
@@ -58,7 +58,7 @@ public class PrintServiceImpl implements IPrintService {
     @Override
     public AuthTicket start(AuthTicket authTicket) throws Exception {
         authenticator.isUserAuthenticated(authTicket);
-        authenticator.isUserAuthorized(PermissionType.START, authTicket);
+        authenticator.isUserAuthorized(PermissionType.START, authTicket.getUsername());
 
         //Specific method code should be placed here...
 
@@ -71,7 +71,7 @@ public class PrintServiceImpl implements IPrintService {
     @Override
     public AuthTicket stop(AuthTicket authTicket) throws Exception {
         authenticator.isUserAuthenticated(authTicket);
-        authenticator.isUserAuthorized(PermissionType.STOP, authTicket);
+        authenticator.isUserAuthorized(PermissionType.STOP, authTicket.getUsername());
 
         //Specific method code should be placed here...
 
@@ -84,7 +84,7 @@ public class PrintServiceImpl implements IPrintService {
     @Override
     public AuthTicket restart(AuthTicket authTicket) throws Exception {
         authenticator.isUserAuthenticated(authTicket);
-        authenticator.isUserAuthorized(PermissionType.RESTART, authTicket);
+        authenticator.isUserAuthorized(PermissionType.RESTART, authTicket.getUsername());
 
         //Specific method code should be placed here...
 
@@ -97,7 +97,7 @@ public class PrintServiceImpl implements IPrintService {
     @Override
     public AuthTicket status(AuthTicket authTicket) throws Exception {
         authenticator.isUserAuthenticated(authTicket);
-        authenticator.isUserAuthorized(PermissionType.STATUS, authTicket);
+        authenticator.isUserAuthorized(PermissionType.STATUS, authTicket.getUsername());
 
         //Specific method code should be placed here...
 
@@ -110,7 +110,7 @@ public class PrintServiceImpl implements IPrintService {
     @Override
     public AuthTicket readConfig(String parameter, AuthTicket authTicket) throws Exception {
         authenticator.isUserAuthenticated(authTicket);
-        authenticator.isUserAuthorized(PermissionType.READ_CONFIG, authTicket);
+        authenticator.isUserAuthorized(PermissionType.READ_CONFIG, authTicket.getUsername());
 
         //Specific method code should be placed here...
 
@@ -123,7 +123,7 @@ public class PrintServiceImpl implements IPrintService {
     @Override
     public AuthTicket setConfig(String parameter, String value, AuthTicket authTicket) throws Exception {
         authenticator.isUserAuthenticated(authTicket);
-        authenticator.isUserAuthorized(PermissionType.SET_CONFIG, authTicket);
+        authenticator.isUserAuthorized(PermissionType.SET_CONFIG, authTicket.getUsername());
 
         //Specific method code should be placed here...
 

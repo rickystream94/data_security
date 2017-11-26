@@ -1,0 +1,51 @@
+{
+  "entries": {
+    "Alice": {
+      "allowed": [
+        "ALL"
+      ]
+    },
+    "Bob": {
+      "allowed": [
+        "START",
+        "STOP",
+        "RESTART",
+        "STATUS",
+        "READ_CONFIG",
+        "SET_CONFIG"
+      ]
+    },
+    "Cecilia": {
+      "allowed": [
+        "PRINT",
+        "TOP_QUEUE",
+        "QUEUE",
+        "RESTART"
+      ]
+    },
+    "David": {
+      "allowed": [
+        "PRINT",
+        "QUEUE"
+      ]
+    },
+    "Erica": {
+      "allowed": [
+        "PRINT",
+        "QUEUE"
+      ]
+    },
+    "Fred": {
+      "allowed": [
+        "PRINT",
+        "QUEUE"
+      ]
+    },
+    "George": {
+      "allowed": [
+        "PRINT",
+        "QUEUE"
+      ]
+    }
+  }
+}

@@ -114,8 +114,8 @@ public class Authenticator implements IAuthenticator {
      * Calls the PolicyManager currently in use to see if the user requesting the action is authorized.
      * Returns silently if user is authorized, otherwise raises an exception with an error message.
      */
-    void isUserAuthorized(PermissionType permissionType, AuthTicket authTicket) throws Exception {
-        policyManager.checkPermission(new PrinterPermission(permissionType), authTicket);
+    void isUserAuthorized(PermissionType permissionType, String username) throws Exception {
+        policyManager.checkPermission(new PrinterPermission(permissionType), username);
     }
 
     /**
