@@ -15,6 +15,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
+import java.util.Scanner;
 
 public class ApplicationServer {
 
@@ -63,8 +64,19 @@ public class ApplicationServer {
 
     //TODO: choose dynamically
     private static void initPolicyManager() {
-        policyManager = new AclPolicyManager();
-        //policyManager = new RoleBasedPolicyManager();
+        Scanner input = new Scanner(System.in);
+        logInfo("Set Policy Manager type to enforce Access Control:");
+        logInfo("(1) Access Control Lists --- (2) Role Based Access Control");
+        int choice = input.nextInt();
+        switch (choice) {
+            case 1:
+                policyManager = new AclPolicyManager();
+                break;
+            default:
+                //Too lazy to handle invalid inputs, so by default init RBAC
+                policyManager = new RoleBasedPolicyManager();
+                break;
+        }
     }
 
     /**

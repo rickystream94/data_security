@@ -44,7 +44,7 @@ public class AclPolicyManager extends PolicyManager {
             JsonObject aclEntry = aclEntries.getJsonObject(username);
 
             //Get the list of permits
-            JsonArray permitsJsonArray = aclEntry.getJsonArray("allowed");
+            JsonArray permitsJsonArray = aclEntry.getJsonArray("permits");
             String[] permitsArray = new String[permitsJsonArray.size()];
             for (int i = 0; i < permitsJsonArray.size(); i++) {
                 permitsArray[i] = permitsJsonArray.getString(i);
@@ -77,5 +77,4 @@ public class AclPolicyManager extends PolicyManager {
     private void logInfo(String message) {
         System.out.println(TAG + Util.getCurrentTime() + message);
     }
-
 }

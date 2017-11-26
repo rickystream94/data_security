@@ -1,6 +1,5 @@
 package server;
 
-import common.AuthTicket;
 import common.Util;
 
 import javax.json.Json;

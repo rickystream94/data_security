@@ -1,12 +1,12 @@
 {
   "entries": {
     "Alice": {
-      "allowed": [
+      "permits": [
         "ALL"
       ]
     },
     "Bob": {
-      "allowed": [
+      "permits": [
         "START",
         "STOP",
         "RESTART",
@@ -16,7 +16,7 @@
       ]
     },
     "Cecilia": {
-      "allowed": [
+      "permits": [
         "PRINT",
         "TOP_QUEUE",
         "QUEUE",
@@ -24,25 +24,25 @@
       ]
     },
     "David": {
-      "allowed": [
+      "permits": [
         "PRINT",
         "QUEUE"
       ]
     },
     "Erica": {
-      "allowed": [
+      "permits": [
         "PRINT",
         "QUEUE"
       ]
     },
     "Fred": {
-      "allowed": [
+      "permits": [
         "PRINT",
         "QUEUE"
       ]
     },
     "George": {
-      "allowed": [
+      "permits": [
         "PRINT",
         "QUEUE"
       ]

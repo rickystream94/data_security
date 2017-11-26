@@ -1,0 +1,38 @@
+{
+  "roles": {
+    "admin": {
+      "inherits": [
+        "service_technician",
+        "power_user"
+      ],
+      "permits": []
+    },
+    "service_technician": {
+      "inherits": [],
+      "permits": [
+        "START",
+        "STOP",
+        "RESTART",
+        "STATUS",
+        "READ_CONFIG",
+        "SET_CONFIG"
+      ]
+    },
+    "power_user": {
+      "inherits": [
+        "ordinary_user"
+      ],
+      "permits": [
+        "TOP_QUEUE",
+        "RESTART"
+      ]
+    },
+    "ordinary_user": {
+      "inherits": [],
+      "permits": [
+        "PRINT",
+        "QUEUE"
+      ]
+    }
+  }
+}
