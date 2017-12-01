@@ -90,16 +90,6 @@ public class RoleBasedPolicyManager extends PolicyManager {
         return permits;
     }
 
-    @Override
-    public void grantPermission(Permission permission, String username) throws Exception {
-
-    }
-
-    @Override
-    public void denyPermission(Permission permission, String username) throws Exception {
-
-    }
-
     private void logInfo(String message) {
         System.out.println(TAG + Util.getCurrentTime() + message);
     }
