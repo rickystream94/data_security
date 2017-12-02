@@ -36,12 +36,26 @@
     }
   },
   "user_roles": {
-    "Alice": "admin",
-    "Bob": "service_technician",
-    "Cecilia": "power_user",
-    "David": "ordinary_user",
-    "Erica": "ordinary_user",
-    "Fred": "ordinary_user",
-    "George": "ordinary_user"
+    "Alice": [
+      "admin"
+    ],
+    "Bob": [
+      "service_technician"
+    ],
+    "Cecilia": [
+      "power_user"
+    ],
+    "David": [
+      "ordinary_user"
+    ],
+    "Erica": [
+      "ordinary_user"
+    ],
+    "Fred": [
+      "ordinary_user"
+    ],
+    "George": [
+      "ordinary_user"
+    ]
   }
 }

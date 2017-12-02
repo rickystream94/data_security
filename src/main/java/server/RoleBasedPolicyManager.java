@@ -22,11 +22,11 @@ public class RoleBasedPolicyManager extends PolicyManager {
     @Override
     public void checkPermission(Permission permission, String username) throws Exception {
         String error;
-        JsonObject userRoles = super.policy.getJsonObject("user_roles");
+        JsonObject usersInfo = super.policy.getJsonObject("user_roles");
         JsonObject rolesPolicy = super.policy.getJsonObject("roles");
 
         //Return immediately if user doesn't have a role
-        if (!userRoles.keySet().contains(username)) {
+        if (!usersInfo.keySet().contains(username)) {
             error = "Error: User " + username + " doesn't have a role!";
             logInfo(error);
             throw new Exception(error);
@@ -37,15 +37,17 @@ public class RoleBasedPolicyManager extends PolicyManager {
             //Get type of requested permission
             PermissionType permissionType = ((PrinterPermission) permission).getPermissionType();
 
-            //Get user's role
-            String userRole = userRoles.getString(username);
+            //Get user's role(s)
+            JsonArray userRoles = usersInfo.getJsonArray(username);
 
-            //Compute set of permissions the specified user has
+            //Compute set of permissions the specified user has (according to ALL the roles he is assigned to)
             Set<String> permits = new HashSet<>();
-            permits = getPermitsPerRole(rolesPolicy, userRole, permits);
-            logInfo("Checking if user " + username + " has '" + permissionType.name() + "' permit among all his permits: " + permits.toString() + "");
+            for (int i = 0; i < userRoles.size(); i++) {
+                permits.addAll(getPermitsPerRole(rolesPolicy, userRoles.getString(i), permits));
+            }
 
             //Check if user has requested permission
+            logInfo("Checking if user " + username + " has '" + permissionType.name() + "' permit among all his permits: " + permits.toString() + "");
             if (permits.contains(permissionType.name())) {
                 logInfo("Permission " + permissionType.name() + " granted for user " + username + ": Authorized!");
                 return;

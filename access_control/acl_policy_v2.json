@@ -41,6 +41,8 @@
     },
     "George": {
       "permits": [
+        "PRINT",
+        "QUEUE",
         "START",
         "STOP",
         "RESTART",
