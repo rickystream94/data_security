@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/JavaRmiSsl.iml" filepath="$PROJECT_DIR$/JavaRmiSsl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DataSecurity_Lab.iml" filepath="$PROJECT_DIR$/DataSecurity_Lab.iml" />
     </modules>
   </component>
 </project>

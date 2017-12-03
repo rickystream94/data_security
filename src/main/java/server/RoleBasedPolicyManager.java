@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class RoleBasedPolicyManager extends PolicyManager {
 
-    private static final String POLICY_FILE_PATH = "access_control/rbac_policy.json";
+    private static final String POLICY_FILE_PATH = "access_control/rbac_policy_v1.json";
     private static final String TAG = "[*** RoleBasedPolicyManager ***]";
 
     RoleBasedPolicyManager() {

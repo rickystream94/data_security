@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 public class AclPolicyManager extends PolicyManager {
 
-    private static final String POLICY_FILE_PATH = "access_control/acl_policy.json";
+    private static final String POLICY_FILE_PATH = "access_control/acl_policy_v1.json";
     private static final String TAG = "[*** AclPolicyManager ***]";
 
     AclPolicyManager() {
