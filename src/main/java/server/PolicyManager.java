@@ -35,11 +35,15 @@ public abstract class PolicyManager {
         }
     }
 
+    /**
+     * Checks if the user specified by the username has the right to perform the action identified by the specified Permission.
+     * If the user is authorized, then the method returns silently. Otherwise, an exception with an error message is raised.
+     *
+     * @param permission
+     * @param username
+     * @throws Exception
+     */
     public abstract void checkPermission(Permission permission, String username) throws Exception;
-
-    public abstract void grantPermission(Permission permission, String username) throws Exception;
-
-    public abstract void denyPermission(Permission permission, String username) throws Exception;
 
     private void logInfo(String message) {
         System.out.println(TAG + Util.getCurrentTime() + message);

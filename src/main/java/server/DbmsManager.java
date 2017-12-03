@@ -45,6 +45,7 @@ public class DbmsManager {
             inputStream.close();
             encryptedProperties = new String(data, "UTF-8");
         } else {
+            file.createNewFile(); //creates new empty file, if and only if it doesn't exist already
             logInfo("File not found, please insert connection parameters...");
             logInfo("Enter Database Host:");
             String host = input.nextLine();
