@@ -1,7 +1,7 @@
 language: java
 sudo: false # faster builds
-jdk: oraclejdk9
+jdk: oraclejdk11
 addons:
   apt:
     packages:
-      - oracle-java9-installer
+      - oracle-java11-installer-local
