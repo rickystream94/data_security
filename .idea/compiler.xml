@@ -11,7 +11,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="DataSecurity_Lab" target="9" />
+      <module name="DataSecurity_Lab" target="11" />
       <module name="JavaRmiSsl" target="9" />
     </bytecodeTargetLevel>
   </component>
